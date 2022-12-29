@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import styles from "../../styles/HomePage/index.module.css";
@@ -8,13 +8,27 @@ import animationStyles from "../../styles/HomePage/loadingIcon.module.css";
 
 function HomePage() {
   const [name, setName] = useState("");
+  const [isEmptyName, setIsEmptyName] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
+  useEffect(() => {
+    if (isEmptyName && name) {
+      setIsEmptyName(false);
+    }
+  }, [name, isEmptyName]);
+
   function handleFormName() {
-    setIsLoading((oldState) => !oldState)
-    // router.push(`/${name}`);
+    if (!name) {
+      setIsEmptyName(true);
+    } else {
+      setIsEmptyName(false);
+      setIsLoading((oldState) => !oldState);
+      setTimeout(() => {
+        router.push(`/${name}`);
+      }, 2000);
+    }
   }
 
   return (
@@ -25,16 +39,24 @@ function HomePage() {
       <div className={styles.smoke2}>
         <Image src="/images/smoke.png" alt="" width={300} height={300} />
       </div>
-      <input
-        className={styles.name_input}
-        type="text"
-        placeholder="DIGITE SEU NOME"
-        onChange={(e) => setName(e.target.value)}
-        value={name}
-      />
+      <div
+        className={`${styles.input_container} ${
+          isEmptyName ? styles.isEmpty : ""
+        }`}
+      >
+        <input
+          type="text"
+          placeholder="DIGITE SEU NOME"
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+        />
+      </div>
       <div className={styles.button_container}>
         <button
-          className={isLoading ? styles.button_is_loading : styles.button}
+          className={`
+          ${isLoading ? styles.button_is_loading : styles.button}
+          ${isEmptyName ? styles.isEmpty : ""}
+          `}
           onClick={handleFormName}
         >
           {!isLoading && <p>confirmar</p>}

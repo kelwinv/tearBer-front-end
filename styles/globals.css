@@ -5,7 +5,8 @@
   border: 0;
   --primary-color: #fcebff;
   --second-color: #aa5aa8;
-  --dark-purple: #784F80;
+  --dark-purple: #784f80;
+  --white: #fffcff;
 }
 
 html,
