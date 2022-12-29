@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { useEffect, useState } from "react";
+import { MouseEvent, MouseEventHandler, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import styles from "../../styles/HomePage/index.module.css";
@@ -19,14 +19,15 @@ function HomePage() {
     }
   }, [name, isEmptyName]);
 
-  function handleFormName() {
+  function handleFormName(event: React.FormEvent<HTMLButtonElement>) {
+    event.preventDefault();
     if (!name) {
       setIsEmptyName(true);
     } else {
       setIsEmptyName(false);
       setIsLoading((oldState) => !oldState);
       setTimeout(() => {
-        router.push(`/${name}`);
+        router.push(`/item/${name}_${"kljaskldas"}`);
       }, 2000);
     }
   }
@@ -39,32 +40,35 @@ function HomePage() {
       <div className={styles.smoke2}>
         <Image src="/images/smoke.png" alt="" width={300} height={300} />
       </div>
-      <div
-        className={`${styles.input_container} ${
-          isEmptyName ? styles.isEmpty : ""
-        }`}
-      >
-        <input
-          type="text"
-          placeholder="DIGITE SEU NOME"
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-      </div>
-      <div className={styles.button_container}>
-        <button
-          className={`
+      <form className={styles.form_content}>
+        <div
+          className={`${styles.input_container} ${
+            isEmptyName ? styles.isEmpty : ""
+          }`}
+        >
+          <input
+            type="text"
+            placeholder="DIGITE SEU NOME"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+        </div>
+        <div className={styles.button_container}>
+          <button
+            className={`
           ${isLoading ? styles.button_is_loading : styles.button}
           ${isEmptyName ? styles.isEmpty : ""}
           `}
-          onClick={handleFormName}
-        >
-          {!isLoading && <p>confirmar</p>}
-          <div className={isLoading ? animationStyles.lds_heart : ""}>
-            <div></div>
-          </div>
-        </button>
-      </div>
+            onClick={handleFormName}
+            type="submit"
+          >
+            {!isLoading && <p>confirmar</p>}
+            <div className={isLoading ? animationStyles.lds_heart : ""}>
+              <div></div>
+            </div>
+          </button>
+        </div>
+      </form>
       <div className={styles.sheet_left}>
         <Image src="/images/sheets.png" alt="" width={200} height={200} />
       </div>

@@ -12,6 +12,12 @@
   overflow: hidden;
 }
 
+.form_content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
 .smoke_top_left_container {
   position: absolute;
   top: -20px;
