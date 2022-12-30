@@ -1,13 +1,15 @@
-import { useRouter } from "next/router";
+import { ItemPageComponent } from "../../components/pages/ItemPage";
+import Head from "next/head";
 
 function ItemPage() {
-  const { query } = useRouter();
   return (
-    <main>
-      <h1>ITEM PAGE</h1>
-      <h2>{query.name_id}</h2>
-    </main>
+    <>
+      <Head>
+        <title>cha de cozinha</title>
+      </Head>
+      <ItemPageComponent />
+    </>
   );
 }
 
-export default ItemPage
+export default ItemPage;
