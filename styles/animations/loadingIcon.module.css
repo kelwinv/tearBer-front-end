@@ -10,7 +10,8 @@
   width: 32px;
   height: 32px;
   background: var(--dark-purple);
-  animation: .9s lds_heart_init 0s,1s lds_heart 1s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  animation: 0.9s lds_heart_init 0s,
+    1s lds_heart 1s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .lds_heart div:after,
 .lds_heart div:before {

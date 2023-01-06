@@ -1,0 +1,55 @@
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 24px;
+
+  max-width: 100%;
+  max-height: 100%;
+  padding: 24px;
+
+  width: 100vh;
+  height: 100vh;
+}
+
+.main h1 {
+  background-image: linear-gradient(
+    to right,
+    var(--dark-purple) 0%,
+    var(--second-color) 50%,
+    var(--dark-purple) 100%
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-align: center;
+  white-space: nowrap;
+
+  animation: loading-animation 2s linear infinite;
+}
+
+@keyframes loading-animation {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    flex-direction: column;
+    gap: 10%;
+  }
+
+  .main h1 {
+    font-size: 1.7rem;
+  }
+}

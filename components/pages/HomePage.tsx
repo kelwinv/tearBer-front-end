@@ -1,10 +1,11 @@
 import Image from "next/image";
 
-import { MouseEvent, MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import styles from "../../styles/HomePage/index.module.css";
-import animationStyles from "../../styles/HomePage/loadingIcon.module.css";
+import { Api } from "../../services/api";
+import { HeartAnimation } from "../HeartAnimation";
 
 function HomePage() {
   const [name, setName] = useState("");
@@ -19,17 +20,17 @@ function HomePage() {
     }
   }, [name, isEmptyName]);
 
-  function handleFormName(event: React.FormEvent<HTMLButtonElement>) {
+  async function handleFormName(event: React.FormEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (!name) {
       setIsEmptyName(true);
-    } else {
-      setIsEmptyName(false);
-      setIsLoading((oldState) => !oldState);
-      setTimeout(() => {
-        router.push(`/item/${name}_${"kljaskldas"}`);
-      }, 2000);
+      return;
     }
+
+    setIsEmptyName(false);
+    setIsLoading((oldState) => !oldState);
+    const response = await Api.post("/guest/create", { name });
+    console.log(response);
   }
 
   return (
@@ -63,9 +64,7 @@ function HomePage() {
             type="submit"
           >
             {!isLoading && <p>confirmar</p>}
-            <div className={isLoading ? animationStyles.lds_heart : ""}>
-              <div></div>
-            </div>
+            <HeartAnimation hasHidden={!isLoading} />
           </button>
         </div>
       </form>
