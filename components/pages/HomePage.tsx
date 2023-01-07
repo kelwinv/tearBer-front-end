@@ -68,6 +68,10 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
+    const id = localStorage.getItem("id");
+    if(id){
+      router.push(`/item/${id}`)
+    }
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;

@@ -51,16 +51,27 @@ function ItemPageComponent() {
   };
 
   const getGuestAndGift = useCallback(async () => {
-    const { data } = await Api.get<getGuestResponse>(`/guest/${query._id}`);
-    if (!data) return;
+    const store_id = localStorage.getItem("id");
+    let guest;
+    if (store_id) {
+      const { data } = await Api.get<getGuestResponse>(`/guest/${query._id}`);
+      if (data) {
+        guest = data;
+      }
+    }
+    if (!guest) {
+      const { data } = await Api.get<getGuestResponse>(`/guest/${query._id}`);
+      guest = data;
+    }
+    if (!guest) return;
     setGuest({
-      name: data.name,
-      id: data.id,
-      attendance: data.attendance,
+      name: guest.name,
+      id: guest.id,
+      attendance: guest.attendance,
     });
-    setGifts(data?.gifts);
-    setSelectedImage(data.gifts[0].id);
-    console.log(data);
+    setGifts(guest?.gifts);
+    setSelectedImage(guest.gifts[0].id);
+    localStorage.setItem("id", guest.id);
   }, [query._id]);
 
   async function confirmAttendance() {
