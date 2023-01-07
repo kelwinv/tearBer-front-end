@@ -2,13 +2,85 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 import styles from "../../styles/ItemPage/index.module.css";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Api } from "../../services/api";
+
+type gift = {
+  id: string;
+  image: string;
+  name: string;
+  price: number;
+};
+
+type guest = {
+  name: string;
+  id: string;
+  attendance: boolean;
+};
+
+type getGuestResponse = {
+  name: string;
+  id: string;
+  attendance: boolean;
+  gifts: gift[];
+};
+
+import React from "react";
 
 function ItemPageComponent() {
   const { query } = useRouter();
+  const [guest, setGuest] = useState<guest>({} as guest);
+  const [gifts, setGifts] = useState<gift[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const containerRef = useRef(null);
+
+  const handleImageClick = (id: string) => {
+    const selectedImage = document.querySelector(`[data-id="${id}"]`);
+
+    console.log(selectedImage);
+    if (!selectedImage) return;
+
+    selectedImage.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+    setSelectedImage(id);
+  };
+
+  const getGuestAndGift = useCallback(async () => {
+    const { data } = await Api.get<getGuestResponse>(`/guest/${query._id}`);
+    if (!data) return;
+    setGuest({
+      name: data.name,
+      id: data.id,
+      attendance: data.attendance,
+    });
+    setGifts(data?.gifts);
+    setSelectedImage(data.gifts[0].id);
+    console.log(data);
+  }, [query._id]);
+
+  async function confirmAttendance() {
+    const { data } = await Api.put(`/guest/confirme/${query._id}`, {
+      attendance: true,
+    });
+
+    if (data) {
+      setGuest(data);
+    }
+  }
+
+  useEffect(() => {
+    getGuestAndGift();
+  }, [getGuestAndGift]);
 
   const myLoader = ({ src }: { src: string }) => {
     return src;
   };
+
   return (
     <main className={styles.main_container}>
       <div className={styles.top_plant_icon}>
@@ -23,19 +95,34 @@ function ItemPageComponent() {
       <section className={styles.main_section}>
         <header className={styles.header_container}>
           <h1>
-            Ola, <strong>{String(query?.name_id).split("_")[0]}</strong>
+            Ola, <strong>{guest?.name}</strong>
           </h1>
         </header>
-        <section className={styles.image_section}>
-          <Image
-            loader={myLoader}
-            src="https://random.imagecdn.app/500/500"
-            alt="background"
-            width={500}
-            height={500}
-          />
-          <p>NOME DO PRODUTO</p>
-        </section>
+        <div className={styles.gifts_container} ref={containerRef}>
+          {gifts.map((gift) => {
+            return (
+              <div
+                className={`${styles.img_card} ${
+                  selectedImage === gift.id ? styles.selected_image : ""
+                }`}
+                key={gift.id}
+                data-id={gift.id}
+                onClick={() => handleImageClick(gift.id)}
+              >
+                <div className={styles.image_section}>
+                  <Image
+                    loader={myLoader}
+                    src={gift.image}
+                    alt="background"
+                    width={250}
+                    height={250}
+                  />
+                </div>
+                <p>{gift.name}</p>
+              </div>
+            );
+          })}
+        </div>
         <span className={styles.hearts_division}>
           <i></i>
           <div className={styles.hearts}>
@@ -45,12 +132,17 @@ function ItemPageComponent() {
           </div>
           <i></i>
         </span>
-        <div className={styles.button_container}>
-          <button>confirmar</button>
+        <div
+          className={`${styles.button_container} ${
+            guest.attendance ? styles.hasConfirmed : ""
+          }`}
+        >
+          <button onClick={confirmAttendance} disabled={guest.attendance}>
+            {guest.attendance ? "presença confirmada " : "confirmar presença"}
+          </button>
         </div>
       </section>
-      <footer>
-      </footer>
+      <footer></footer>
     </main>
   );
 }

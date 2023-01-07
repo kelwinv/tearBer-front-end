@@ -32,30 +32,62 @@
   color: var(--dark-purple);
 }
 
-.image_section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  margin: auto;
-
-  gap: 28px;
-  width: 80%;
-  max-width: 700px;
+.gifts_container {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.image_section img {
-  max-width: 100%;
-  height: auto;
-  max-height: 50vh;
-  border-radius: 48px;
+.gifts_container::-webkit-scrollbar {
+  width: 20px;
+}
+.gifts_container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.gifts_container::-webkit-scrollbar-thumb {
+  background-color: var(--dark-purple);
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
 }
 
-.image_section p {
+.img_card {
+  display: inline-block;
+  align-self: center;
+  justify-self: center;
+  max-width: 50vw;
+  max-height: 50vw;
+
+  display: inline-block;
+  margin: auto 2vw;
+  width: 250px;
+  height: 250px;
+  transition: all 0.4s ease-out;
+}
+
+.img_card.selected_image {
+  width: 400px;
+  height: 400px;
+}
+
+.img_card p {
   font-weight: 500;
   font-size: 1.4rem;
   color: var(--dark-purple);
+}
+
+.image_section {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 48px;
+}
+
+.image_section img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .hearts_division {
@@ -105,4 +137,22 @@
 
 .button_container button:hover {
   opacity: 0.8;
+}
+
+.button_container.hasConfirmed{
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+@media (max-width: 600px) {
+  .img_card {
+    width: 150px;
+    height: 150px;
+  }
+
+  .img_card.selected_image {
+    width: 200px;
+    height: 200px;
+  }
 }
