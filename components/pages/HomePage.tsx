@@ -10,6 +10,7 @@ import { HeartAnimation } from "../HeartAnimation";
 function HomePage() {
   const [name, setName] = useState("");
   const [isEmptyName, setIsEmptyName] = useState(false);
+  const [nameAlreadyExiste, setNameAlreadyExiste] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -18,19 +19,38 @@ function HomePage() {
     if (isEmptyName && name) {
       setIsEmptyName(false);
     }
+    setNameAlreadyExiste(false);
   }, [name, isEmptyName]);
 
-  async function handleFormName(event: React.FormEvent<HTMLButtonElement>) {
-    event.preventDefault();
-    if (!name) {
-      setIsEmptyName(true);
-      return;
-    }
+  async function handleFormName(event: React.FormEvent<HTMLFormElement>) {
+    try {
+      event.preventDefault();
+      const formatted_name = name.trim();
+      if (isLoading) return;
+      if (!formatted_name) {
+        setIsEmptyName(true);
+        return;
+      }
 
-    setIsEmptyName(false);
-    setIsLoading((oldState) => !oldState);
-    const response = await Api.post("/guest/create", { name });
-    console.log(response);
+      setIsEmptyName(false);
+      setIsLoading((oldState) => !oldState);
+      const { data } = await Api.post("/guest/create", {
+        name: formatted_name,
+      });
+
+      if (data.status === 409) {
+        setNameAlreadyExiste(true);
+        setIsLoading(false);
+      }
+      console.log(data);
+
+      if (data._id) {
+        router.push(`/item/${data._id}`);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      alert(error);
+    }
   }
 
   return (
@@ -41,7 +61,7 @@ function HomePage() {
       <div className={styles.smoke2}>
         <Image src="/images/smoke.png" alt="" width={300} height={300} />
       </div>
-      <form className={styles.form_content}>
+      <form className={styles.form_content} onSubmit={handleFormName}>
         <div
           className={`${styles.input_container} ${
             isEmptyName ? styles.isEmpty : ""
@@ -49,10 +69,17 @@ function HomePage() {
         >
           <input
             type="text"
-            placeholder="DIGITE SEU NOME"
+            placeholder="NOME E SOBRE NOME"
+            className={nameAlreadyExiste ? styles.nameAlreadyExiste : ""}
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
+          {nameAlreadyExiste && (
+            <p>
+              O nome ja está em sendo usado por outro convidado tente colocar o
+              sobre nome
+            </p>
+          )}
         </div>
         <div className={styles.button_container}>
           <button
@@ -60,7 +87,6 @@ function HomePage() {
           ${isLoading ? styles.button_is_loading : styles.button}
           ${isEmptyName ? styles.isEmpty : ""}
           `}
-            onClick={handleFormName}
             type="submit"
           >
             {!isLoading && <p>confirmar</p>}
