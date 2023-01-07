@@ -1,17 +1,20 @@
 import Image from "next/image";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import styles from "../../styles/HomePage/index.module.css";
 import { Api } from "../../services/api";
 import { HeartAnimation } from "../HeartAnimation";
+import { LoadingServer } from "./LoadingServer";
 
 function HomePage() {
   const [name, setName] = useState("");
   const [isEmptyName, setIsEmptyName] = useState(false);
   const [nameAlreadyExiste, setNameAlreadyExiste] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingServer, setIsLoadingServer] = useState(true);
+  const isInitialMount = useRef(true);
 
   const router = useRouter();
 
@@ -52,6 +55,27 @@ function HomePage() {
       alert(error);
     }
   }
+
+  const testeServer = useCallback(async () => {
+    try {
+      const response = await Api.get("/ping");
+      console.log(response);
+      setIsLoadingServer(false);
+    } catch (error) {
+      setIsLoadingServer(true);
+      setTimeout(() => testeServer(), 5000);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    testeServer();
+  }, [testeServer]);
+
+  // if (isLoadingServer) return <LoadingServer />;
 
   return (
     <main className={styles.main_container}>
