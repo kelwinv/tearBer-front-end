@@ -93,7 +93,7 @@ function HomePage() {
         >
           <input
             type="text"
-            placeholder="NOME E SOBRE NOME"
+            placeholder="NOME E SOBRENOME"
             className={nameAlreadyExiste ? styles.nameAlreadyExiste : ""}
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -101,7 +101,7 @@ function HomePage() {
           {nameAlreadyExiste && (
             <p>
               O nome ja está em sendo usado por outro convidado tente colocar o
-              sobre nome
+              sobrenome
             </p>
           )}
         </div>
